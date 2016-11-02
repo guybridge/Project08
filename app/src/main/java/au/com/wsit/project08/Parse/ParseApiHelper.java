@@ -163,9 +163,10 @@ public class ParseApiHelper
     // Filter items by date
     public void filterResults(Date startDate, Date endDate, final FilterCallback callback)
     {
+        Log.i(TAG, "Filtering results");
         ParseQuery<ParseObject> filterQuery = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
-        filterQuery.whereGreaterThan("createdAt", startDate);
-        filterQuery.whereLessThan("createdAt", endDate);
+        //filterQuery.whereGreaterThan("createdAt", startDate);
+        //filterQuery.whereLessThan("createdAt", endDate);
         filterQuery.findInBackground(new FindCallback<ParseObject>()
         {
             @Override

@@ -29,11 +29,11 @@ public class LocationAlarm
         Intent locationService = new Intent(mContext, LocationService.class);
         // Create the pending intent
         mPendingAlarmIntent = PendingIntent.getService(mContext, 0, locationService, 0);
-        // Set the alarm to fire every 30 minutes
+        // Set the alarm to fire every 15 minutes
         mAlarmManager.setInexactRepeating
                 (AlarmManager.ELAPSED_REALTIME,
-                        AlarmManager.INTERVAL_HOUR,
-                        AlarmManager.INTERVAL_HOUR,
+                        AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                        AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                         mPendingAlarmIntent);
 
 

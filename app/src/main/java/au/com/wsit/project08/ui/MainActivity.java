@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view)
             {
                 LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(current, 21.0f);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(current, 17.0f);
                 mGoogleMap.animateCamera(cameraUpdate);
             }
         });
@@ -80,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements
         // Start the location alarm
         LocationAlarm alarm = new LocationAlarm(this);
         alarm.startLocationTracking();
-
-        getLocationList();
 
     }
 
@@ -99,47 +97,34 @@ public class MainActivity extends AppCompatActivity implements
         mHelper.connect();
     }
 
-    private void getLocationList()
-    {
-        ParseApiHelper helper = new ParseApiHelper();
-        helper.getLocations(new ParseApiHelper.GetLocationsCallback()
-        {
-            @Override
-            public void result(ArrayList<Location> locations)
-            {
-                for (Location location : locations)
-                {
-
-                    Log.i(TAG, "Locations we've been: " + location.toString() + " at: " + location.getTime());
-                    setMarkers(location);
-
-                }
-            }
-
-            @Override
-            public void onFail(String msg)
-            {
-                Log.i(TAG, "Failed to get past locations");
-            }
-        });
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
         mGoogleMap = googleMap;
     }
 
-    private void setMarkers(Location location)
+    private void setFilterMarkers(ArrayList<Location> places)
+    {
+        for (Location location : places)
+        {
+            setCurrentLocation(location);
+        }
+    }
+
+    // Sets a marker on the location passed in.
+    private void setCurrentLocation(Location location)
     {
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-        MarkerOptions options  = new MarkerOptions()
+        Date date = new Date(location.getTime());
+        String markerTitle = date.toString();
+
+        MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title(location.toString());
+                .title(markerTitle);
 
         mGoogleMap.addMarker(options);
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -150,14 +135,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void LocationChanged(Location location)
     {
-        setMarkers(location);
+        setCurrentLocation(location);
         mCurrentLocation = location;
     }
 
     @Override
     public void onConnected(Location location)
     {
-        setMarkers(location);
+        setCurrentLocation(location);
         mCurrentLocation = location;
     }
 
@@ -183,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements
         else
         {
             Log.i(TAG, "Location permission denied");
-
         }
     }
 
@@ -191,8 +175,26 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void result(Date sourceDate, Date endDate)
     {
+
         Log.i(TAG, "Got filter fragment callback");
         // TODO: Sort results
+        Log.i(TAG, "Selected date ranges are: " + "source: " + sourceDate.getTime() + " end: " + endDate.getTime());
+        ParseApiHelper filter = new ParseApiHelper();
+        filter.filterResults(sourceDate, endDate, new ParseApiHelper.FilterCallback()
+        {
+            @Override
+            public void result(ArrayList<Location> locations)
+            {
+                Log.i(TAG, "Got " + locations.size() + " locations");
+                setFilterMarkers(locations);
+            }
+
+            @Override
+            public void onFail(String msg)
+            {
+                Log.i(TAG, "Unable to get date ranges: " + msg);
+            }
+        });
 
     }
 }

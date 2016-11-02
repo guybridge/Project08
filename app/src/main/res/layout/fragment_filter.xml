@@ -5,17 +5,44 @@
               android:layout_height="match_parent">
 
 
+    <TextView
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Date"
+        android:id="@+id/startDateTextView"
+        android:layout_gravity="center_horizontal"/>
+
     <DatePicker
+        android:calendarViewShown="false"
         android:datePickerMode="spinner"
         android:id="@+id/sourceDatePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
 
+    <TextView
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Date"
+        android:id="@+id/endDateTextView"
+        android:layout_gravity="center_horizontal"/>
+
     <DatePicker
+        android:calendarViewShown="false"
         android:datePickerMode="spinner"
         android:id="@+id/endDatePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:layout_margin="5dp"
+        android:background="@color/buttonColour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        android:id="@+id/showButton"
         android:layout_gravity="center_horizontal"/>
 </LinearLayout>
