@@ -32,8 +32,8 @@ public class LocationAlarm
         // Set the alarm to fire every 30 minutes
         mAlarmManager.setInexactRepeating
                 (AlarmManager.ELAPSED_REALTIME,
-                        AlarmManager.INTERVAL_HALF_HOUR,
-                        AlarmManager.INTERVAL_HALF_HOUR,
+                        AlarmManager.INTERVAL_HOUR,
+                        AlarmManager.INTERVAL_HOUR,
                         mPendingAlarmIntent);
 
 
