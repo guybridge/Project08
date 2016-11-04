@@ -9,6 +9,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -165,8 +166,14 @@ public class ParseApiHelper
     {
         Log.i(TAG, "Filtering results");
         ParseQuery<ParseObject> filterQuery = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
-        //filterQuery.whereGreaterThan("createdAt", startDate);
-        //filterQuery.whereLessThan("createdAt", endDate);
+
+
+        //YYYY-MM-DDTHH:mm:ss.SSSZ
+        Log.i(TAG, "Start date is: " + startDate);
+        Log.i(TAG, "End date is: " + endDate);
+
+        filterQuery.whereGreaterThan("createdAt", startDate);
+        filterQuery.whereLessThan("createdAt", endDate);
         filterQuery.findInBackground(new FindCallback<ParseObject>()
         {
             @Override

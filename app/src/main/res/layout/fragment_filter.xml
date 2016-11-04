@@ -16,9 +16,17 @@
     <DatePicker
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
-        android:id="@+id/sourceDatePicker"
+        android:id="@+id/startDatePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <TimePicker
+        android:visibility="gone"
+        android:timePickerMode="spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/startTimePicker"
         android:layout_gravity="center_horizontal"/>
 
     <TextView
@@ -35,6 +43,14 @@
         android:id="@+id/endDatePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    <TimePicker
+        android:visibility="gone"
+        android:timePickerMode="spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/endTimePicker"
         android:layout_gravity="center_horizontal"/>
 
     <Button

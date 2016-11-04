@@ -86,11 +86,15 @@ public class GoogleServicesHelper implements
         {
             Log.i(TAG, "Location permission granted");
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            mCallback.onConnected(location);
+
             if(location == null)
             {
                 // Blank for the moment
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            }
+            else
+            {
+                mCallback.onConnected(location);
             }
         }
 

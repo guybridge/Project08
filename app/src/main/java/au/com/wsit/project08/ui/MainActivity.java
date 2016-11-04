@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.drive.query.Filter;
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements
     private Location mCurrentLocation;
     private Button mFilterButton;
     private ImageButton mCurrentLocationButton;
+    private ProgressBar mFilterLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
         mapFragment.getMapAsync(this);
         mFilterButton = (Button) findViewById(R.id.filterButton);
         mCurrentLocationButton = (ImageButton) findViewById(R.id.currentLocationButton);
+        mFilterLoading = (ProgressBar) findViewById(R.id.markerProgressLoading);
+        mFilterLoading.setVisibility(View.INVISIBLE);
 
         mFilterButton.setOnClickListener(new View.OnClickListener()
         {
@@ -175,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void result(Date sourceDate, Date endDate)
     {
-
+        mFilterLoading.setVisibility(View.VISIBLE);
         Log.i(TAG, "Got filter fragment callback");
         // TODO: Sort results
         Log.i(TAG, "Selected date ranges are: " + "source: " + sourceDate.getTime() + " end: " + endDate.getTime());
@@ -185,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void result(ArrayList<Location> locations)
             {
+                mFilterLoading.setVisibility(View.INVISIBLE);
                 Log.i(TAG, "Got " + locations.size() + " locations");
                 setFilterMarkers(locations);
             }
