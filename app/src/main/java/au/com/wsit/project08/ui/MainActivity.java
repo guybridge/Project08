@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.drive.query.Filter;
 import com.google.android.gms.maps.CameraUpdate;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements
     private Button mFilterButton;
     private ImageButton mCurrentLocationButton;
     private ProgressBar mFilterLoading;
+    private TextView mFilterDates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements
         mapFragment.getMapAsync(this);
         mFilterButton = (Button) findViewById(R.id.filterButton);
         mCurrentLocationButton = (ImageButton) findViewById(R.id.currentLocationButton);
+        mFilterDates = (TextView) findViewById(R.id.datesView);
+        mFilterDates.setVisibility(View.INVISIBLE);
         mFilterLoading = (ProgressBar) findViewById(R.id.markerProgressLoading);
         mFilterLoading.setVisibility(View.INVISIBLE);
 
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view)
             {
                 LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(current, 17.0f);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(current, 14.0f);
                 mGoogleMap.animateCamera(cameraUpdate);
             }
         });
@@ -183,6 +188,8 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(TAG, "Got filter fragment callback");
         // TODO: Sort results
         Log.i(TAG, "Selected date ranges are: " + "source: " + sourceDate.getTime() + " end: " + endDate.getTime());
+        mFilterDates.setVisibility(View.VISIBLE);
+        mFilterDates.setText(sourceDate + "\n" + endDate);
         ParseApiHelper filter = new ParseApiHelper();
         filter.filterResults(sourceDate, endDate, new ParseApiHelper.FilterCallback()
         {
@@ -191,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements
             {
                 mFilterLoading.setVisibility(View.INVISIBLE);
                 Log.i(TAG, "Got " + locations.size() + " locations");
+                Toast.makeText(MainActivity.this, "Got " + locations.size() + " locations", Toast.LENGTH_LONG).show();
                 setFilterMarkers(locations);
             }
 

@@ -38,8 +38,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/currentLocationButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:textSize="16sp"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@color/buttonColour"
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/datesView"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

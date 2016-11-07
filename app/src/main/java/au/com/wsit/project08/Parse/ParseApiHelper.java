@@ -167,13 +167,16 @@ public class ParseApiHelper
         Log.i(TAG, "Filtering results");
         ParseQuery<ParseObject> filterQuery = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
 
+        // Add 24 hours to the endTime
+        Date midnight = new Date(endDate.getTime() + 86400000);
+        Date startDateTimeOffset = new Date(startDate.getTime() + 28800000);
 
         //YYYY-MM-DDTHH:mm:ss.SSSZ
-        Log.i(TAG, "Start date is: " + startDate);
-        Log.i(TAG, "End date is: " + endDate);
+        Log.i(TAG, "Start date is: " + startDateTimeOffset);
+        Log.i(TAG, "End date is: " + midnight);
 
         filterQuery.whereGreaterThan("createdAt", startDate);
-        filterQuery.whereLessThan("createdAt", endDate);
+        filterQuery.whereLessThan("createdAt", midnight);
         filterQuery.findInBackground(new FindCallback<ParseObject>()
         {
             @Override
