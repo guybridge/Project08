@@ -13,7 +13,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
@@ -26,16 +25,18 @@
             </intent-filter>
         </activity>
 
-        <!--Location service-->
+        <!-- Location service -->
         <service android:name=".service.LocationService"/>
 
-        <!--Receivers-->
+        <!-- Receivers -->
         <receiver android:name=".service.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.SignInActivity">
+        </activity>
     </application>
 
 </manifest>
