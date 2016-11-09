@@ -91,11 +91,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setUserParseClassName()
     {
-        String id = mSharedPreferences.getString(TrackerConstants.KEY_ID, "");
-        String firstname = mSharedPreferences.getString(TrackerConstants.KEY_FIRSTNAME, "");
-        String lastname = mSharedPreferences.getString(TrackerConstants.KEY_SECONDNAME, "");
-        mEditor.putString(TrackerConstants.USER_PARSE_CLASS_NAME, firstname + lastname + id);
-        Log.i(TAG, "Setting user class name: " + firstname + lastname + id);
+        String email = mSharedPreferences.getString(TrackerConstants.KEY_EMAIL, "");
+        email = email
+                .replace("@", "")
+                .replace(".", "")
+                .replace("-", "")
+                .replace("_", "");
+
+        mEditor.putString(TrackerConstants.USER_PARSE_CLASS_NAME, email);
+        Log.i(TAG, "Setting user class name: " + email);
         mEditor.apply();
     }
 
