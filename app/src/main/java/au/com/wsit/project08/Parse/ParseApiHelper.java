@@ -1,5 +1,8 @@
 package au.com.wsit.project08.Parse;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 import com.parse.FindCallback;
@@ -24,6 +27,14 @@ import au.com.wsit.project08.utils.TrackerConstants;
 public class ParseApiHelper
 {
     private static final String TAG = ParseApiHelper.class.getSimpleName();
+    private String userParseClassName;
+    private SharedPreferences mSharedPreferences;
+
+    public ParseApiHelper(Context context)
+    {
+        mSharedPreferences =  context.getSharedPreferences(TrackerConstants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        userParseClassName = mSharedPreferences.getString(TrackerConstants.USER_PARSE_CLASS_NAME, "");
+    }
 
 
     // Callback for adding a location to the Parse backend
@@ -49,40 +60,76 @@ public class ParseApiHelper
     // If they are too close then we don't check in
     public void addLocation(final Location location, final AddLocationCallback callback)
     {
+
         // Get the latLng from the location object
         final double latitude = location.getLatitude();
         final double longitude = location.getLongitude();
 
         // Debug
         Log.i(TAG, "Saving location: " + location.toString() + " to Parse backend");
+        Log.i(TAG, "User class name is: " + userParseClassName);
 
         // First check the last location saved
-        ParseQuery<ParseObject> lastLocation = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
+        ParseQuery<ParseObject> lastLocation = ParseQuery.getQuery(userParseClassName);
         lastLocation.addDescendingOrder("createdAt");
         lastLocation.getFirstInBackground(new GetCallback<ParseObject>()
         {
             @Override
             public void done(ParseObject object, ParseException e)
             {
-                Date lastCheckIn = object.getCreatedAt();
-                double lastLat = object.getDouble(TrackerConstants.KEY_LATITUDE);
-                double lastLong = object.getDouble(TrackerConstants.KEY_LONGITUDE);
-
-                Log.i(TAG, "The last location tracked was at: " + lastCheckIn.toString());
-                Log.i(TAG, "The latLng for this location is: " + lastLat
-                + "," + lastLong);
-
-                double destLatitude = location.getLatitude();
-                double destLongitude = location.getLongitude();
-                float distanceTohere = Distance.findDistanceBetween(lastLat, lastLong, destLatitude, destLongitude);
-                Log.i(TAG, "The distance to here is: " + distanceTohere + " meters");
-
-                // If the distance is greater to here then do the check in, otherwise don't worry.
-                if(distanceTohere > 50)
+                if(e == null)
                 {
-                    Log.i(TAG, "Distance is greater than parameters, going to check user in.");
+                    // We have success
+                    Date lastCheckIn = object.getCreatedAt();
+                    double lastLat = object.getDouble(TrackerConstants.KEY_LATITUDE);
+                    double lastLong = object.getDouble(TrackerConstants.KEY_LONGITUDE);
+
+                    Log.i(TAG, "The last location tracked was at: " + lastCheckIn.toString());
+                    Log.i(TAG, "The latLng for this location is: " + lastLat
+                            + "," + lastLong);
+
+                    double destLatitude = location.getLatitude();
+                    double destLongitude = location.getLongitude();
+                    float distanceTohere = Distance.findDistanceBetween(lastLat, lastLong, destLatitude, destLongitude);
+                    Log.i(TAG, "The distance to here is: " + distanceTohere + " meters");
+
+                    // If the distance is greater to here then do the check in, otherwise don't worry.
+                    if(distanceTohere > 50)
+                    {
+                        Log.i(TAG, "Distance is greater than parameters, going to check user in.");
+                        // Add location to backend
+                        ParseObject addLocation = new ParseObject(userParseClassName);
+                        addLocation.put(TrackerConstants.KEY_LATITUDE, latitude);
+                        addLocation.put(TrackerConstants.KEY_LONGITUDE, longitude);
+                        addLocation.saveInBackground(new SaveCallback()
+                        {
+                            @Override
+                            public void done(ParseException e)
+                            {
+                                if(e == null)
+                                {
+
+                                    callback.onSuccess();
+                                }
+                                else
+                                {
+
+                                    callback.onFail(e.getMessage());
+                                }
+
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Log.i(TAG, "Distance between current location and last location are too close.");
+                        callback.onFail("Distance between current location and last location are too close.");
+                    }
+                }
+                else // Checking if the last location query failed so add a new one
+                {
                     // Add location to backend
-                    ParseObject addLocation = new ParseObject(TrackerConstants.LOCATION_CLASS_NAME);
+                    ParseObject addLocation = new ParseObject(userParseClassName);
                     addLocation.put(TrackerConstants.KEY_LATITUDE, latitude);
                     addLocation.put(TrackerConstants.KEY_LONGITUDE, longitude);
                     addLocation.saveInBackground(new SaveCallback()
@@ -104,11 +151,7 @@ public class ParseApiHelper
                         }
                     });
                 }
-                else
-                {
-                    Log.i(TAG, "Distance between current location and last location are too close.");
-                    callback.onFail("Distance between current location and last location are too close.");
-                }
+
 
             }
         });
@@ -120,7 +163,7 @@ public class ParseApiHelper
     public void getLocations(final GetLocationsCallback callback)
     {
         // Create a parse query object
-        ParseQuery<ParseObject> pastLocations = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
+        ParseQuery<ParseObject> pastLocations = ParseQuery.getQuery(userParseClassName);
         // Sort descending by date
         pastLocations.addDescendingOrder("createdAt");
         pastLocations.findInBackground(new FindCallback<ParseObject>()
@@ -165,7 +208,7 @@ public class ParseApiHelper
     public void filterResults(Date startDate, Date endDate, final FilterCallback callback)
     {
         Log.i(TAG, "Filtering results");
-        ParseQuery<ParseObject> filterQuery = ParseQuery.getQuery(TrackerConstants.LOCATION_CLASS_NAME);
+        ParseQuery<ParseObject> filterQuery = ParseQuery.getQuery(userParseClassName);
 
         // Add 24 hours to the endTime
         Date midnight = new Date(endDate.getTime() + 86400000);

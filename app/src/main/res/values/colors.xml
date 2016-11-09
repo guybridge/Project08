@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="buttonColour">#80ffffff</color>
+    <color name="signInBackup">#9ccc65</color>
 </resources>

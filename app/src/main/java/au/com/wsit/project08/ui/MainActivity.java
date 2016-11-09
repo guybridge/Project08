@@ -1,5 +1,8 @@
 package au.com.wsit.project08.ui;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -7,14 +10,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.drive.query.Filter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +32,7 @@ import au.com.wsit.project08.Google.GoogleServicesHelper;
 import au.com.wsit.project08.Parse.ParseApiHelper;
 import au.com.wsit.project08.R;
 import au.com.wsit.project08.service.LocationAlarm;
+import au.com.wsit.project08.utils.TrackerConstants;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -42,10 +45,11 @@ public class MainActivity extends AppCompatActivity implements
     private SupportMapFragment mapFragment;
     private GoogleServicesHelper mHelper;
     private Location mCurrentLocation;
-    private Button mFilterButton;
     private ImageButton mCurrentLocationButton;
     private ProgressBar mFilterLoading;
     private TextView mFilterDates;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,25 +59,18 @@ public class MainActivity extends AppCompatActivity implements
 
         mHelper = new GoogleServicesHelper(this, this);
 
+        mSharedPreferences = getSharedPreferences(TrackerConstants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+        mEditor = mSharedPreferences.edit();
+
+        setUserParseClassName();
+
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mFilterButton = (Button) findViewById(R.id.filterButton);
         mCurrentLocationButton = (ImageButton) findViewById(R.id.currentLocationButton);
         mFilterDates = (TextView) findViewById(R.id.datesView);
         mFilterDates.setVisibility(View.INVISIBLE);
         mFilterLoading = (ProgressBar) findViewById(R.id.markerProgressLoading);
         mFilterLoading.setVisibility(View.INVISIBLE);
-
-        mFilterButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                android.app.FragmentManager fm = getFragmentManager();
-                FilterFragment filterFragment = new FilterFragment();
-                filterFragment.show(fm, "FilterFragment");
-            }
-        });
 
         mCurrentLocationButton.setOnClickListener(new View.OnClickListener()
         {
@@ -92,6 +89,16 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private void setUserParseClassName()
+    {
+        String id = mSharedPreferences.getString(TrackerConstants.KEY_ID, "");
+        String firstname = mSharedPreferences.getString(TrackerConstants.KEY_FIRSTNAME, "");
+        String lastname = mSharedPreferences.getString(TrackerConstants.KEY_SECONDNAME, "");
+        mEditor.putString(TrackerConstants.USER_PARSE_CLASS_NAME, firstname + lastname + id);
+        Log.i(TAG, "Setting user class name: " + firstname + lastname + id);
+        mEditor.apply();
+    }
+
     @Override
     protected void onPause()
     {
@@ -104,6 +111,13 @@ public class MainActivity extends AppCompatActivity implements
     {
         super.onResume();
         mHelper.connect();
+    }
+
+    private void showFilterDialog()
+    {
+        android.app.FragmentManager fm = getFragmentManager();
+        FilterFragment filterFragment = new FilterFragment();
+        filterFragment.show(fm, "FilterFragment");
     }
 
     @Override
@@ -190,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(TAG, "Selected date ranges are: " + "source: " + sourceDate.getTime() + " end: " + endDate.getTime());
         mFilterDates.setVisibility(View.VISIBLE);
         mFilterDates.setText(sourceDate + "\n" + endDate);
-        ParseApiHelper filter = new ParseApiHelper();
+        ParseApiHelper filter = new ParseApiHelper(this);
         filter.filterResults(sourceDate, endDate, new ParseApiHelper.FilterCallback()
         {
             @Override
@@ -209,5 +223,37 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.action_filter:
+                // Filter results
+                showFilterDialog();
+                break;
+            case R.id.action_logout:
+                // Logout
+                mEditor.clear();
+                mEditor.apply();
+                Intent signInIntent = new Intent(MainActivity.this, SignInActivity.class);
+                signInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                signInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(signInIntent);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

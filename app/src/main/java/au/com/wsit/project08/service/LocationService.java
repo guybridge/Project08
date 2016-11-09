@@ -58,7 +58,7 @@ public class LocationService extends IntentService implements
 
     private void saveLocation(Location location)
     {
-        ParseApiHelper helper = new ParseApiHelper();
+        ParseApiHelper helper = new ParseApiHelper(getApplicationContext());
         helper.addLocation(location, new ParseApiHelper.AddLocationCallback()
         {
             @Override

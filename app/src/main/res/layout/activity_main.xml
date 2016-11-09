@@ -20,17 +20,6 @@
         android:layout_height="wrap_content"
         />
 
-    <Button
-        android:layout_margin="10dp"
-        android:background="@color/buttonColour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Filter"
-        android:id="@+id/filterButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
     <ImageButton
         android:layout_margin="10dp"
         android:src="@mipmap/ic_current_location"
@@ -39,8 +28,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/currentLocationButton"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:textSize="16sp"
