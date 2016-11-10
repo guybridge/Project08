@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
-
 import au.com.wsit.project08.Google.GoogleServicesHelper;
 import au.com.wsit.project08.Parse.ParseApiHelper;
 

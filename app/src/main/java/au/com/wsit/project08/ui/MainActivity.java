@@ -24,10 +24,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 import au.com.wsit.project08.Google.GoogleServicesHelper;
 import au.com.wsit.project08.Parse.ParseApiHelper;
 import au.com.wsit.project08.R;
@@ -252,8 +250,7 @@ public class MainActivity extends AppCompatActivity implements
                 mEditor.clear();
                 mEditor.apply();
                 Intent signInIntent = new Intent(MainActivity.this, SignInActivity.class);
-                signInIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                signInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                signInIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(signInIntent);
                 break;
         }

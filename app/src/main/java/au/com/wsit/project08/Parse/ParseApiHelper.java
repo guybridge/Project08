@@ -1,6 +1,6 @@
 package au.com.wsit.project08.Parse;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -11,13 +11,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import au.com.wsit.project08.service.LocationService;
 import au.com.wsit.project08.utils.Distance;
 import au.com.wsit.project08.utils.TrackerConstants;
 
@@ -66,7 +62,6 @@ public class ParseApiHelper
         final double longitude = location.getLongitude();
 
         // Debug
-        Log.i(TAG, "Saving location: " + location.toString() + " to Parse backend");
         Log.i(TAG, "User class name is: " + userParseClassName);
 
         // First check the last location saved
@@ -79,7 +74,7 @@ public class ParseApiHelper
             {
                 if(e == null)
                 {
-                    // We have success
+                    // We have success, there is a previous location
                     Date lastCheckIn = object.getCreatedAt();
                     double lastLat = object.getDouble(TrackerConstants.KEY_LATITUDE);
                     double lastLong = object.getDouble(TrackerConstants.KEY_LONGITUDE);
@@ -88,6 +83,7 @@ public class ParseApiHelper
                     Log.i(TAG, "The latLng for this location is: " + lastLat
                             + "," + lastLong);
 
+                    // Get our current location
                     double destLatitude = location.getLatitude();
                     double destLongitude = location.getLongitude();
                     float distanceTohere = Distance.findDistanceBetween(lastLat, lastLong, destLatitude, destLongitude);

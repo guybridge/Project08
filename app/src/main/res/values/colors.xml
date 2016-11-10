@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="buttonColour">#80ffffff</color>
     <color name="signInBackup">#9ccc65</color>
+    <color name="dateFilterBackground">#c8ffffff</color>
 </resources>

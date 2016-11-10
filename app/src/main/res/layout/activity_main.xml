@@ -35,7 +35,7 @@
         android:textSize="16sp"
         android:layout_margin="10dp"
         android:padding="10dp"
-        android:background="@color/buttonColour"
+        android:background="@color/dateFilterBackground"
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
